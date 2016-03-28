@@ -29,8 +29,7 @@ grayImg2 = rgb2gray(colorImg2);
 [r1, c1, r2, c2] = detect_features(grayImg1, grayImg2);
 
 %display an overlay of the features ontop of the image
-im = cat(2, colorImg1, colorImg2);
-figure; imshow(im); hold on; title('Overlay detected features (corners)');
+figure; imshow([colorImg1 colorImg2]); hold on; title('Overlay detected features (corners)');
 hold on; plot(c1,r1,'ys'); plot(c2 + widthImg1, r2, 'ys'); 
 
 
@@ -59,15 +58,13 @@ match_r2 = r2(img2_matchedFeature_idx);
 match_c2 = c2(img2_matchedFeature_idx);
 
 % Display an overlay of these best matched features on top of the images
-im = cat(2, colorImg1, colorImg2);
-figure; imshow(im); hold on; title('Overlay top matched features');
+figure; imshow([colorImg1 colorImg2]); hold on; title('Overlay top matched features');
 hold on; plot(match_c1, match_r1,'ys'); plot(match_c2 + widthImg1, match_r2, 'ys'); 
 
 % Display lines connecting the matched features
-im = cat(2, colorImg1, colorImg2);
 plot_r = [match_r1, match_r2];
 plot_c = [match_c1, match_c2 + widthImg1];
-figure; imshow(im); hold on; title('Mapping of top matched features');
+figure; imshow([colorImg1 colorImg2]); hold on; title('Mapping of top matched features');
 hold on; 
 plot(match_c1, match_r1,'ys');           %mark features from the 1st img
 plot(match_c2 + widthImg1, match_r2, 'ys'); %mark features from the 2nd img
