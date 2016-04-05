@@ -2,7 +2,6 @@ function [ bestFitModel, inlierIndices ] = ransac_H( parameters, x, y, fitModelF
 %RANSAC_H Summary of this function goes here
 %   Detailed explanation goes here
 
-
     [numMatches, ~] = size(x);
     numInliersEachIteration = zeros(parameters.numIterations,1);
     storedModels = {};%zeros(parameters.numIterations,3,3);
@@ -11,7 +10,7 @@ function [ bestFitModel, inlierIndices ] = ransac_H( parameters, x, y, fitModelF
         %display(['Running ransac Iteration: ', num2str(i)]);
         
         %select a random subset of points
-        subsetIndices = randsample(1:numMatches, parameters.subsetSize);
+        subsetIndices = randsample(numMatches, parameters.subsetSize);
         x_subset = x(subsetIndices, :);
         y_subset = y(subsetIndices, :);
             

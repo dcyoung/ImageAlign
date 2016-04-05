@@ -20,8 +20,6 @@ colorImg2 = im2double(colorImg2);
 
 grayImg1 = rgb2gray(colorImg1);
 grayImg2 = rgb2gray(colorImg2);
-%grayImg1 = mean(double(colorImg1),3)./max(double(colorImg1(:)));
-%grayImg2 = mean(double(colorImg2),3)./max(double(colorImg2(:)));
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Detect feature points in both images
@@ -79,16 +77,32 @@ end
 %create homogenous versions of the the matched feature points for each img
 img1MatchFeatPts = [match_c1, match_r1, ones(numMatches,1)];
 img2MatchFeatPts = [match_c2, match_r2, ones(numMatches,1)];
-[H] = estimate_homography(img1MatchFeatPts,img2MatchFeatPts);
-display(H);
+[H, inlierIndices] = estimate_homography(img1MatchFeatPts,img2MatchFeatPts);
+%display(H);
 
-%%%CHANGE THESE%%%%%%%
-% Warp image
+match_c1 = match_c1(inlierIndices);
+match_c2 = match_c2(inlierIndices);
+match_r1 = match_r1(inlierIndices);
+match_r2 = match_r2(inlierIndices);
+
+% Display an overlay of the inlier matches
+figure; imshow([colorImg1 colorImg2]); hold on; title('Inlier Matches');
+hold on; plot(match_c1, match_r1,'ys'); plot(match_c2 + widthImg1, match_r2, 'ys'); 
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Stitch/Blend the warped img1 onto img2 to create a composite
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Transform/Warp the first image using the found homography matrix
 homographyTransform = maketform('projective', H);
 img1Transformed = imtransform(colorImg1, homographyTransform);
-figure, imshow(img1Transformed);title('Warped image');
+figure, imshow(img1Transformed);
+title('Warped image');
 
-% Composite images
-imout_h = image_composite(colorImg1, colorImg2, H);
-figure, imshow(imout_h);title('Alignment by homography');
+% Stitch the images together with the correct overlap
+stitchedCompositeImg = stitch(colorImg1, colorImg2, H);
+figure, imshow(stitchedCompositeImg);
+title('Alignment by homography');
 
